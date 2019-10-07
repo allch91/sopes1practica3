@@ -1,0 +1,14 @@
+
+.plot-container {
+	width: 95%;
+	height: 50%;
+	display: block;
+}
+
+.plot-placeholder {
+	width: 95%;
+	height: 95%;
+	background-color: #f7f1e3;
+
+}
+

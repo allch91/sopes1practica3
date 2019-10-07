@@ -1,0 +1,31 @@
+.header{
+    background-color: #2C3A47;
+    font-size: 14px;
+    color: #778ca3f1;
+    padding: 10px;
+    height: 50px;
+}
+
+body{
+    background-color: #f1f2f6;
+    max-width: 95%;
+    height: 600px;
+}
+
+.panel-page{
+    width: 95%;
+    margin: 5px;
+    height: 95%;
+}
+
+h2{
+    text-align: center;
+    font-size: 16px;
+    color: #130f40;
+}
+
+h4{
+    font-size: 14px bold;
+    margin: 5px;
+    color: #222f3e;
+}

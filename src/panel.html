@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8>
+	<title>Monitor de Recursos</title>
+	<link href="/static/panel.css" rel="stylesheet" type="text/css">
+	<link href="/static/rtgraph.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="/static/jquery.js"></script>
+	<script type="text/javascript" src="/static/jquery.flot.js"></script>
+	<script type="text/javascript">
+
+		var wsUri = "ws://localhost:8080/websocket";
+		var wsUri1 = "ws://localhost:8080/websocket1";
+		var totalPoints = 20;
+		var data = [];
+		var data1 = [];
+		var websocket;
+		var websocket1;
+		var plot;
+		var plot1;
+
+		function onReady() {
+
+			for (var i = -totalPoints; i < 0; i++) {
+				data.push([i, 0]);
+				data1.push([i, 0]);
+			}
+
+
+			plot = $.plot("#placeholder", [data], {
+				series: {
+					shadowSize: 2
+				},
+				yaxis: {
+					min: 0,
+					max: 100
+				},
+				xaxis: {
+					show: true
+				}
+			});
+
+			plot1 = $.plot("#placeholder1", [data1], {
+				series: {
+					shadowSize: 2
+				},
+				yaxis: {
+					min: 0,
+					max: 100
+				},
+				xaxis: {
+					show: true
+				},
+				legend: {
+					noColumns: 0,
+					labelBoxBorderColor: "#000000",
+					position: "nw"
+				}
+			});
+
+			websocket = new WebSocket(wsUri);
+			websocket.onmessage = function (evt) { onMessage(evt) };
+
+			websocket1 = new WebSocket(wsUri1);
+			websocket1.onmessage = function (evt) { onMessage1(evt) };
+
+		}
+
+		function onMessage(evt) {
+			if (data[19].length > 1) {
+				document.getElementById("memTotal").innerHTML = data[19][2];
+				document.getElementById("memFree").innerHTML = data[19][3];
+				document.getElementById("memPerc").innerHTML = data[19][1]
+			}
+
+			data = data.slice(1);
+			data.push(jQuery.parseJSON(evt.data));
+			plot.setData([data]);
+			plot.setupGrid();
+			plot.draw();
+		}
+
+		function onMessage1(evt) {
+			document.getElementById("cpuUsed").innerHTML = data1[19][1]
+			data1 = data1.slice(1);
+			data1.push(jQuery.parseJSON(evt.data));
+			plot1.setData([data1]);
+			plot1.setupGrid();
+			plot1.draw();
+		}
+
+		$(document).ready(onReady)
+
+	</script>
+</head>
+
+<body>
+	<div class="header">
+		<h1>Monitor de Recursos</h1>
+	</div>
+	<div class="panel-page">
+
+		<div class="plot-container">
+			<h2>Uso de CPU</h2>
+			<div id="placeholder1" class="plot-placeholder"></div>
+
+			<div class="cpu-info">
+				<div id="cpuinfo" class="cpu-info"></div>
+				<h4> Utilizacion CPU (%):  <span id="cpuUsed"></span></h3>
+			</div>
+
+		</div>
+
+
+		<div class="plot-container">
+			<h2>Uso de Memoria</h2>
+			<div id="placeholder" class="plot-placeholder"></div>
+
+			<div class="mem-info">
+				<div id="meminfo" class="mem-info"></div>
+				<h4> Memoria Total (MiB):  <span id="memTotal"></span></h3>
+					<h4> Memoria Libre (MiB):  <span id="memFree"></span></h3>
+						<h4> Memoria Usada (%):  <span id="memPerc"></span></h3>
+			</div>
+
+		</div>
+
+	</div>
+
+
+</body>
+
+</html>
